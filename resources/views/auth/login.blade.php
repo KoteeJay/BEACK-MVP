@@ -35,7 +35,7 @@
     <h4 class="block text-xl text-center font-medium text-blue-800">
     Login
     </h4>
-    <form method="POST" action="{{ route('login') }}" class="mt-8 mb-2 w-80 max-w-screen-lg sm:w-96">
+    <form method="POST" action="{{ route('login') }}" class="mt-8 mb-2 w-80 max-w-screen-lg sm:w-96 mx-auto">
         @csrf
         <div class="mb-1 flex flex-col gap-6">
         <div class="w-full max-w-sm min-w-[200px]">
@@ -106,12 +106,12 @@
         </button>
         <p class="flex justify-center text-sm text-slate-100">
         Don&apos;t have an account?
-        <a href="{{ route('register') }}" class="ml-1 text-sm font-semibold text-slate-700 underline">
+        <a href="{{ route('register') }}" class="ml-1 text-sm font-semibold text-white underline">
             Register
         </a>
         </p>
         <a
-            class="flex items-center justify-center w-full rounded-md py-2 px-4 border border-transparent text-center text-md transition-all shadow-md hover:shadow-lg focus:bg-slate-100 focus:shadow-none active:bg-slate-700 hover:bg-slate-800 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+            class="flex items-center justify-center w-full rounded-md py-2 px-4 border border-slate-700 text-center text-md transition-all shadow-md hover:shadow-lg focus:bg-slate-600 focus:shadow-none active:bg-slate-700 hover:bg-slate-800 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
             type="button" href="{{ route('auth.google') }}"
         >
             <img src="{{ asset('assets/img/google.png') }}" alt="Google" class="w-6 h-6 mr-4">
@@ -119,7 +119,7 @@
             Login with Google
         </a>
         <a
-            class="flex items-center justify-center w-full rounded-md py-2 px-4 border border-transparent text-center text-md transition-all shadow-md hover:shadow-lg focus:bg-slate-100 focus:shadow-none active:bg-slate-700 hover:bg-slate-800 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+            class="flex items-center justify-center w-full rounded-md py-2 px-4 border border-slate-700 text-center text-md transition-all shadow-md hover:shadow-lg focus:bg-slate-600 focus:shadow-none active:bg-slate-700 hover:bg-slate-800 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
             type="button" href=""
         >
             <img src="{{ asset('assets/img/facebook.png') }}" alt="Facebook" class="w-6 h-6 mr-4">

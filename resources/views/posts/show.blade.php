@@ -8,7 +8,7 @@
 
     <section class="section dashboard">
         <div class="row">
-            <div class=" main-page col-lg-8 px-5">
+            <div class=" main-page col-lg-8 px-1 lg:px5">
              
                 <div class="row">
                     <div class=" col-md-12">
