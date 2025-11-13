@@ -11,8 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\CommentNotificationMail;
 
-class 
-CommentController extends Controller
+class CommentController extends Controller
 {
     public function store(Request $request)
     {
@@ -27,12 +26,15 @@ CommentController extends Controller
             'body' => $request->body,
         ]);
 
-        // Send email to post author (2 minutes later)
+        // Notify post author
         $postAuthor = $comment->post->user;
-        if ($postAuthor && $postAuthor->email) {
-            Mail::to($postAuthor->email)
-                ->later(now()->addMinutes(2), new CommentNotificationMail($comment));
+
+        if ($postAuthor && $postAuthor->id !== Auth::id()) {
+            $postAuthor->notify(new PostCommented($comment));
         }
+
+        // Notify post author via email
+        Mail::to($postAuthor->email)->queue(new CommentNotificationMail($comment));
 
         return back()->with('success', 'Comment added successfully!');
     }

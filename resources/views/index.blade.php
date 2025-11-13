@@ -1,53 +1,48 @@
 @extends('layouts.app')
 @section('content')
 @livewire('search-box')
-<x-sidebar />
-<main id="main" class="main bg-gradient-to-br from-slate-900 via-slate-800 to-black text-gray-100">
 
-    <section class="section dashboard">
-                <div class="row">
-                    <div class=" main-page col-lg-8">
-                        <div class="row">
-                            <div class=" col-md-12">
-                                {{-- Posts container for infinite scroll --}}
-                                <div id="posts-container">
-                                    @foreach ($Posts as $Post)     
-                                        <x-posts.post-card :post="$Post" />
-                                    @endforeach
-                                </div>
+<div class="flex min-h-screen">
 
-                                {{-- Sentinel used by IntersectionObserver to trigger loading next page --}}
-                                <div id="infinite-scroll-sentinel" 
-                                     class="flex items-center justify-center py-6"
-                                     data-base-url="{{ route('posts.loadMore') }}"
-                                     data-next-page="{{ $Posts->currentPage() < $Posts->lastPage() ? $Posts->currentPage()+1 : '' }}"
-                                     data-last-page="{{ $Posts->lastPage() }}">
-                                    @if($Posts->hasMorePages())
-                                        <div id="infinite-loading" class="flex items-center gap-2 text-sm text-slate-200">
-                                            <svg class="w-5 h-5 animate-spin text-slate-200" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
-                                            </svg>
-                                            Loading more posts...
-                                        </div>
-                                    @else
-                                        <div class="text-sm text-slate-400">No more posts.</div>
-                                    @endif
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-            <!-- End Left side columns -->
-            <!-- Right side columns -->
-            <div class="col-lg-4">
-                <!-- Available -->
-                <x-available />
-                <!-- End Available -->
-            </div>
-            <!-- End Right side columns -->
+    <!-- Sidebar -->
+    <x-sidebar class="hidden md:block" />
+   
+
+    <!-- Main Content -->
+    <main class="w-full sm:w-11/12 md:w-4/5 lg:w-2/3 xl:w-1/2 bg-slate-900 p-4 sm:p-6 mx-auto rounded-lg">
+        <!-- Page content goes here -->
+        <div id="posts-container" class="space-y-6">
+            @foreach ($Posts as $Post)
+                <x-posts.post-card :post="$Post" />
+            @endforeach
         </div>
-    </section>
-</main>
+
+        {{-- Infinite scroll sentinel --}}
+        <div id="infinite-scroll-sentinel" 
+             class="flex items-center justify-center py-6"
+             data-base-url="{{ route('posts.loadMore') }}"
+             data-next-page="{{ $Posts->currentPage() < $Posts->lastPage() ? $Posts->currentPage()+1 : '' }}"
+             data-last-page="{{ $Posts->lastPage() }}">
+            @if($Posts->hasMorePages())
+                <div id="infinite-loading" class="flex items-center gap-2 text-sm text-slate-200">
+                    <svg class="w-5 h-5 animate-spin text-slate-200" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                    </svg>
+                    Loading more posts...
+                </div>
+            @else
+                <div class="text-sm text-slate-400">No more posts.</div>
+            @endif
+        </div>
+    </main>
+
+    <!-- Optional empty space to balance layout -->
+    <div class="flex-1"></div>
+
+</div>
+
+
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function () {

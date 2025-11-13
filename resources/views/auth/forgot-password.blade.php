@@ -1,9 +1,9 @@
 <x-guest-layout>
-    <h4 class="block text-xl text-center font-medium text-blue-800">
+    <h4 class="block text-xl text-center font-medium text-gray-200">
    Recover Password
   </h4>
-    <div class="mb-4 mt-4 text-sm text-gray-600">
-        {{ __('Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.') }}
+    <div class="mb-4 mt-4 text-sm text-gray-200">
+        {{ __('Forgot your password? Enter your email address to reset your password.') }}
     </div>
 
     <!-- Session Status -->

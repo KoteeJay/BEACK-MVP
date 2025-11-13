@@ -1,10 +1,13 @@
-<div class="mx-3">
-    <button wire:click="toggleLike"  style="border: none; background: none;">
+<div class="inline-flex items-center gap-2">
+    <button wire:click="toggleLike" class="focus:outline-none" aria-label="Toggle like">
         @if ($hasLiked)
-            <i class="bi bi-hand-thumbs-up-fill" style="color: #0099ff; font-size: 20px;" ></i>
+            <!-- solid (filled) thumbs-up -->
+            <i class="fas fa-thumbs-up text-blue-600 transition-transform hover:scale-105"></i>
         @else
-            <i class="bi bi-hand-thumbs-up"  style=" font-size: 20px;" ></i>
+            <!-- regular (outline) thumbs-up -->
+            <i class="far fa-thumbs-up text-slate-400 transition-colors hover:text-slate-200"></i>
         @endif
     </button>
-    <span>{{ $post->likedBy()->count() }}</span>
+
+    <span class="ml-1 text-sm text-slate-300">{{ $post->likedBy()->count() }}</span>
 </div>

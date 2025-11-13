@@ -6,7 +6,6 @@ namespace App\Models;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Models\Post;
 use Laravel\Sanctum\HasApiTokens;
-use Laravel\Jetstream\HasProfilePhoto;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -17,7 +16,6 @@ class User extends Authenticatable
 {
     use HasApiTokens;
     use HasFactory;
-    // use HasProfilePhoto;
     use Notifiable;
     use TwoFactorAuthenticatable;
 
@@ -89,8 +87,11 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Post::class, 'likes', 'user_id', 'post_id')->withTimestamps();
     }
-    /**
-     * Use 'name' for route model binding.
-     */
+    
+
+    public function unreadNotifications()
+    {
+        return $this->notifications()->whereNull('read_at');
+    }
     
   }

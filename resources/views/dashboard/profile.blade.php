@@ -1,271 +1,181 @@
 @section('title', 'Profile')
 @extends('layouts.app')
+
 @section('content')
-<x-sidebar>
-    
-    <li class="nav-item">
-        <a class="nav-link collapsed" href="{{ route('home.index')}}">
-            <i class="bi bi-grid"></i>
-            <span>Post</span>
-        </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link collapsed" href="{{ route('dashboard.profile')}}">
-            <i class="bi bi-grid"></i>
-            <span>Profile</span>
-        </a>
-    </li>
-    <!-- End Blank Page Nav -->
-   
-</x-sidebar>
 
-<main id="main" class="main">
+<div class="flex min-h-screen space-y-10">
+<!-- Sidebar -->
+    <aside id="sidebar"class="sidebar lg:w-1/4 border-r border-indigo-300 bg-slate-900 text-gray-100 space-y-6">
+            <h1> <br> <br> <br></h1>
+            <ul class="space-y-10 pl-5 fixed">
+                <li class="nav-item hidden md:block">
+                    <a class="flex items-center gap-2 px-4 py-2 hover:bg-indigo-700 rounded" href="#">
+                        <i class="fa fa-table-cells-large"></i>
+                        <span>Overview</span>
+                    </a>
+                </li>
+                <li class="nav-item hidden md:block">
+                    <a class="flex items-center gap-2 px-4 py-2 hover:bg-indigo-700 rounded" href="{{ route('dashboard.create') }}">
+                        <i class="fa fa-pen-to-square"></i>
+                        <span>Create new post</span>
+                    </a>
+                </li>
+                <li class="nav-item hidden md:block">
+                    <a class="flex items-center gap-2 px-4 py-2 hover:bg-indigo-700 rounded" href="{{ route('dashboard.profile') }}">
+                        <i class="fa fa-user"></i>
+                        <span>Profile</span>
+                    </a>
+                </li>
 
-    <div class="pagetitle">
-        <h1>Profile</h1>
-        <nav>
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href=" {{ url('dashboard')}}">Dashboard</a></li>
-                <li class="breadcrumb-item active">Profile</li>
-            </ol>
-        </nav>
+                @auth
+                    @if (auth()->user()->user_type === 'super_admin')
+                        <li class="nav-item">
+                            <a class="flex items-center gap-2 px-4 py-2 hover:bg-indigo-700 rounded" href="{{ route('admin.dashboard') }}">
+                                <i class="bi bi-people"></i>
+                                <span>User Management</span>
+                            </a>
+                        </li>
+                    @endif
+                @endauth
+            </ul>
+    </aside>
+    <!-- End Sidebar -->
+
+<main class="flex-1 p-8 md:p-12 lg:p-16 dark:bg-gray-900 min-h-screen transition duration-300 overflow-y-auto">
+    <div class="mb-6">
+        <h1 class="text-2xl font-semibold text-gray-900 dark:text-gray-100">Profile</h1>
+        <p class="text-gray-500 dark:text-gray-400 text-sm">Manage your profile information and preferences</p>
     </div>
-    <!-- End Page Title -->
 
-    <section class="section profile">
-        <div class="row">
-            <div class="col-xl-4">
+    <section class="grid md:grid-cols-3 gap-2">
+        <!-- Profile Sidebar -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-md text-center transition duration-300">
+            <img src="{{ $user->profile_photo_path ? asset('storage/' . $user->profile_photo_path) : asset('default-profile.png') }}"
+                alt="{{ $user->name }}"
+                class="w-28 h-28 rounded-full object-cover mx-auto border-4 border-indigo-500 shadow-md">
 
-                <div class="card">
-                    <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
+            <h2 class="mt-4 text-lg font-semibold text-gray-900 dark:text-gray-100">{{ $user->name }}</h2>
+            <p class="text-indigo-400 text-sm">{{ $user->specialization ?? 'No specialization yet' }}</p>
 
-                        <img src="{{ $user->profile_photo_path ? asset('storage/' . $user->profile_photo_path) : asset('default-profile.png') }}" 
-                        alt="{{ $user->name }}" 
-                        style="width: 100px; height: 100px; border-radius: 50%;">
-                                           <h2>{{ $user->name }}  </h2>
-                        <h3>{{ $user->specialization }}</h3>
-                        <div class="social-links mt-2">
-                            <a href="#" class="twitter"><i class="bi bi-twitter"></i></a>
-                            <a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
-                            <a href="#" class="instagram"><i class="bi bi-instagram"></i></a>
-                            <a href="#" class="linkedin"><i class="bi bi-linkedin"></i></a>
-                        </div>
-                    </div>
-                </div>
-                
-                
+            <div class="flex justify-center space-x-4 mt-4 text-gray-500 dark:text-gray-400">
+                <a href="#"><i class="fa-brands fa-twitter hover:text-blue-400"></i></a>
+                <a href="#"><i class="fa-brands fa-facebook hover:text-blue-600"></i></a>
+                <a href="#"><i class="fa-brands fa-instagram hover:text-pink-500"></i></a>
+                <a href="#"><i class="fa-brands fa-linkedin hover:text-blue-700"></i></a>
+            </div>
+        </div>
+
+        <!-- Profile Content -->
+        <div class="md:col-span-2 bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-md transition duration-300">
+            <div class="flex border-b border-gray-200 dark:border-gray-300 mb-4">
+                <button id="tab-overview" class="tab-btn border-b-2 border-indigo-500 text-indigo-500 px-4 py-2 font-medium">
+                    Overview
+                </button>
+                <button id="tab-edit" class="tab-btn border-b-2 border-transparent text-gray-500 dark:text-gray-400 px-4 py-2 font-medium hover:text-indigo-400">
+                    Edit Profile
+                </button>
             </div>
 
-            <div class="col-xl-8">
+            <!-- Overview -->
+            <div id="overview" class="tab-content">
+                <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-3">About</h3>
+                <p class="text-gray-600 dark:text-gray-400 mb-6">{{ $user->about ?? 'No bio added yet.' }}</p>
 
-                <div class="card">
-                    <div class="card-body pt-3">
-                        <!-- Bordered Tabs -->
-                        <ul class="nav nav-tabs nav-tabs-bordered">
-                            <li class="nav-item">
-                                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">Overview</button>
-                            </li>
-                            <li class="nav-item">
-                                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-edit">Edit Profile</button>
-                            </li>
-    
-                        </ul>
-                        <div class="tab-content pt-2">
-
-                            <div class="tab-pane fade show active profile-overview" id="profile-overview">
-                                <h5 class="card-title">About</h5>
-                                <p class="small fst-italic">{{ $user->about }}</p>
-
-                                <h5 class="card-title">Profile Details</h5>
-
-                                <div class="row">
-                                    <div class="col-lg-3 col-md-4 label ">Full Name</div>
-                                    <div class="col-lg-9 col-md-8">{{ $user->name }}  </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-lg-3 col-md-4 label">Company</div>
-                                    <div class="col-lg-9 col-md-8">{{ $user->company }}</div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-lg-3 col-md-4 label">Specialization</div>
-                                    <div class="col-lg-9 col-md-8">{{ $user->specialization }}</div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-lg-3 col-md-4 label">Country</div>
-                                    <div class="col-lg-9 col-md-8">{{ $user->country }}</div>
-                                </div>
-
-                                
-                                <div class="row">
-                                    <div class="col-lg-3 col-md-4 label">Phone</div>
-                                    <div class="col-lg-9 col-md-8">{{ $user->phone }}</div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-lg-3 col-md-4 label">Email</div>
-                                    <div class="col-lg-9 col-md-8">{{ auth()->user()->email }}  </div>
-                                </div>
-
-                            </div>
-
-                            <div class="tab-pane fade profile-edit pt-3" id="profile-edit">
-
-                                <!-- Profile Edit Form -->
-                                <form action="{{ route('profile.update') }}" method="POST" id="upload-form" enctype="multipart/form-data">
-                                    @csrf
-                                    @method('PUT')
-                                    <div class="row mb-3">
-                                        
-                                        
-                                        
-                                        <label for="profileImage" class="col-md-4 col-lg-3 col-form-label">Profile Image</label>
-                                        <div class="col-md-8 col-lg-9">
-                                            <img src="{{ $user->profile_photo_path ? asset('storage/' . $user->profile_photo_path) : asset('default-profile.png') }}" 
-                                            alt="{{ $user->name }}" 
-                                            style="width: 50px; height: 50px;" id="profileImagePreviewEdit">                                            
-                                            <img id="imagePreview" style="display: none; max-width: 300px; margin-top: 10px; border-radius: 8px">
-                                                <div class="pt-2">
-                                                    <input type="file" id="upload-file" name="photo" class="upload-input mx-5" accept="image/*" onchange="previewImage(event)">
-                                                    
-                                                    <label for="upload-file" class="btn btn-primary text-white">
-                                                        <i class="bi bi-upload"></i> Choose File
-                                                    </label>
-                                                    
-                                                    @error('photo')
-                                                        <span class="text-danger">{{ $message }}</span>
-                                                    @enderror
-                                                </div>
-                                           
-                                        </div>
-                                    </div>
-
-                                    <div class="row mb-3">
-                                        <label for="fullName" class="col-md-4 col-lg-3 col-form-label">Full Name</label>
-                                        <div class="col-md-8 col-lg-9">
-                                            <input name="name" type="text" class="form-control" id="fullName" value="{{ $user->name }}">
-                                            @error('name')
-                                                <span class="text-danger">{{ $message }}</span>
-                                            @enderror
-                                        </div>
-                                    </div>
-
-                                    <div class="row mb-3">
-                                        <label for="email" class="col-md-4 col-lg-3 col-form-label">Email</label>
-                                        <div class="col-md-8 col-lg-9">
-                                            <input name="email" type="email" class="form-control" id="email" value="{{ $user->email }}">
-                                            @error('email')
-                                                <span class="text-danger">{{ $message }}</span>
-                                            @enderror
-                                        </div>
-                                    </div>
-                                    <div class="row mb-3">
-                                        <label for="about" class="col-md-4 col-lg-3 col-form-label">About</label>
-                                        <div class="col-md-8 col-lg-9">
-                                            <textarea name="about" class="form-control" id="about">{{ $user->about }}</textarea>
-                                            @error('about')
-                                                <span class="text-danger">{{ $message }}</span>
-                                            @enderror
-                                        </div>
-                                    </div>
-
-                                    <div class="row mb-3">
-                                        <label for="company" class="col-md-4 col-lg-3 col-form-label">Company</label>
-                                        <div class="col-md-8 col-lg-9">
-                                            <input name="company" type="text" class="form-control" id="company" value="{{ $user->company }}">
-                                            @error('company')
-                                                <span class="text-danger">{{ $message }}</span>
-                                            @enderror
-                                        </div>
-                                    </div>
-
-                                    <div class="row mb-3">
-                                        <label for="specialization" class="col-md-4 col-lg-3 col-form-label">Specialization</label>
-                                        <div class="col-md-8 col-lg-9">
-                                            <input name="specialization" type="text" class="form-control" id="specialization" value="{{ $user->specialization }}">
-                                            @error('specialization')
-                                                <span class="text-danger">{{ $message }}</span>
-                                            @enderror
-                                        </div>
-                                    </div>
-
-                                    <div class="row mb-3">
-                                        <label for="phone" class="col-md-4 col-lg-3 col-form-label">Phone</label>
-                                        <div class="col-md-8 col-lg-9">
-                                            <input name="phone" type="text" class="form-control" id="phone" value="{{ $user->phone }}">
-                                            @error('phone')
-                                                <span class="text-danger">{{ $message }}</span>
-                                            @enderror
-                                        </div>
-                                    </div>
-
-                                    <div class="row mb-3">
-                                        <label for="country" class="col-md-4 col-lg-3 col-form-label">Country</label>
-                                        <div class="col-md-8 col-lg-9">
-                                            <input name="country" type="text" class="form-control" id="country" value="{{ $user->country }}">
-                                            @error('country')
-                                                <span class="text-danger">{{ $message }}</span>
-                                            @enderror
-                                        </div>
-                                    </div>
-
-
-                                    <div class="text-center">
-                                        <button type="submit" class="btn btn-primary">Save Changes</button>
-                                    </div>
-                                </form><!-- End Profile Edit Form -->
-                     
-                                <!-- End Profile Edit Form -->
-
-                            </div>
-
-                        </div>
-                        <!-- End Bordered Tabs -->
-
-                    </div>
+                <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-3">Profile Details</h3>
+                <div class="space-y-3 text-gray-700 dark:text-gray-300">
+                    <p><span class="font-semibold">Full Name:</span> {{ $user->name }}</p>
+                    <p><span class="font-semibold">Company:</span> {{ $user->company }}</p>
+                    <p><span class="font-semibold">Specialization:</span> {{ $user->specialization }}</p>
+                    <p><span class="font-semibold">Country:</span> {{ $user->country }}</p>
+                    <p><span class="font-semibold">Phone:</span> {{ $user->phone }}</p>
+                    <p><span class="font-semibold">Email:</span> {{ $user->email }}</p>
                 </div>
+            </div>
 
+            <!-- Edit Profile -->
+            <div id="edit" class="tab-content hidden">
+                <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data" id="upload-form" class="space-y-5">
+                    @csrf
+                    @method('PUT')
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Profile Image</label>
+                        <div class="mt-2 flex items-center space-x-4">
+                            <img id="profileImagePreviewEdit"
+                                src="{{ $user->profile_photo_path ? asset('storage/' . $user->profile_photo_path) : asset('default-profile.png') }}"
+                                alt="Profile"
+                                class="w-14 h-14 rounded-full object-cover">
+                            <input type="file" id="upload-file" name="photo" accept="image/*" onchange="previewImage(event)"
+                                class="text-sm text-gray-500 dark:text-gray-400">
+                        </div>
+                        <img id="imagePreview" class="hidden mt-3 rounded-lg w-32 h-32 object-cover border border-gray-300 dark:border-gray-600">
+                        @error('photo')<p class="text-red-500 text-sm mt-1">{{ $message }}</p>@enderror
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <x-profile-input label="Full Name" name="name" value="{{ $user->name }}" />
+                        <x-profile-input label="Email" name="email" type="email" value="{{ $user->email }}" />
+                        <x-profile-input label="Company" name="company" value="{{ $user->company }}" />
+                        <x-profile-input label="Specialization" name="specialization" value="{{ $user->specialization }}" />
+                        <x-profile-input label="Phone" name="phone" value="{{ $user->phone }}" />
+                        <x-profile-input label="Country" name="country" value="{{ $user->country }}" />
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">About</label>
+                        <textarea name="about" rows="3"
+                            class="w-full mt-1 p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-transparent text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-indigo-500">{{ $user->about }}</textarea>
+                    </div>
+
+                    <button type="submit" class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg shadow-md transition">
+                        Save Changes
+                    </button>
+                </form>
             </div>
         </div>
     </section>
-
 </main>
-
-
-
+</div>
 @endsection
 
 @push('scripts')
 <script>
-  
-
-    function previewImage(event) {
-        const imageInput = event.target;
-        const preview = document.getElementById('imagePreview');
-
-        if (imageInput.files && imageInput.files[0]) {
-            const reader = new FileReader();
-
-            reader.onload = function(e) {
-                preview.src = e.target.result;
-                preview.style.display = 'block';
-                document.getElementById('profileImagePreviewEdit').style.display = 'none';
-      
-            };
-
-            reader.readAsDataURL(imageInput.files[0]);
-        }
-        document.getElementById('upload-form').addEventListener('submit', function (e) {
-            const image = document.getElementById('upload-file').files[0];
-            const maxSize = 2040 * 1024; // 2040 KB in bytes
-
-            if (image && image.size > maxSize) {
-                e.preventDefault();
-                alert('The image size must not exceed 2 MB.');
-            }
+    // ✅ Tab Switching
+    const tabs = document.querySelectorAll('.tab-btn');
+    const contents = document.querySelectorAll('.tab-content');
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            tabs.forEach(btn => btn.classList.remove('border-indigo-500', 'text-indigo-500'));
+            contents.forEach(c => c.classList.add('hidden'));
+            tab.classList.add('border-indigo-500', 'text-indigo-500');
+            document.getElementById(tab.id === 'tab-overview' ? 'overview' : 'edit').classList.remove('hidden');
         });
+    });
+
+    // ✅ Image Preview
+    function previewImage(event) {
+        const input = event.target;
+        const preview = document.getElementById('imagePreview');
+        const oldImg = document.getElementById('profileImagePreviewEdit');
+
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = e => {
+                preview.src = e.target.result;
+                preview.classList.remove('hidden');
+                oldImg.classList.add('hidden');
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
     }
+
+    // ✅ File Size Validation
+    document.getElementById('upload-form').addEventListener('submit', e => {
+        const file = document.getElementById('upload-file').files[0];
+        if (file && file.size > 2 * 1024 * 1024) {
+            e.preventDefault();
+            alert('The image size must not exceed 2 MB.');
+        }
+    });
 </script>
 @endpush

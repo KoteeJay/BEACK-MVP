@@ -18,11 +18,11 @@ class UserManagementController extends Controller
     public function updateRole(Request $request, User $user)
     {
         $request->validate([
-            'role' => 'required|in:user,admin,super_admin',
+            'user_type' => 'required|in:user,admin,super_admin',
         ]);
 
-        $user->update(['role' => $request->input('role')]);
+        $user->update(['user_type' => $request->input('user_type')]);
 
-        return back()->with('success', "{$user->name}'s role updated to {$user->role}");
+        return back()->with('success', "{$user->name}'s role updated to {$user->user_type}");
     }
 }

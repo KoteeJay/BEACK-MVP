@@ -22,8 +22,8 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="font-sans text-gray-900 antialiased">
-        <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gradient-to-br from-slate-900 via-slate-800 to-black text-gray-100">
+    <body class="min-h-screen w-full bg-fixed bg-slate-900 font-sans text-gray-900 antialiased">
+        <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 text-gray-100">
             <div class="w-full sm:max-w-md mt-6 px-6 py-4 max-w-lg bg-slate-900/60 backdrop-blur-lg rounded-2xl border border-slate-700 p-8 shadow-md overflow-hidden sm:rounded-lg">
                 {{ $slot }}
             </div>
